@@ -5,3 +5,12 @@ lxml==5.4.0
 openpyxl
 jieba==0.42.1
 logger==1.4
+httpx[socks]==0.28.1
+rich==14.0.0
+click
+rookiepy
+emoji
+PyYAML
+aiofiles
+textual
+pyperclip
