@@ -1,16 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time     : 2025/5/17 10:33
+# @Author   : 冉勇
+# @File     : title_analysis.py
+# @Software : PyCharm
+# @Desc     : 分析标题
 import pandas as pd
 import jieba
 import jieba.analyse
-import logging
+from utils.log_util import logger
 from collections import Counter
 from datetime import datetime
-
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 def extract_keywords(title):

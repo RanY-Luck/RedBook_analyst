@@ -1,22 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time     : 2025/5/17 10:33
+# @Author   : 冉勇
+# @File     : spider.py
+# @Software : PyCharm
+# @Desc     : 抓取小红书图文
 import pandas as pd
 import requests
-import logging
 import time
+from utils.log_util import logger
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# 需要替换为实际的cookie
+cookie = 'customerClientId=087431735812996; x-user-id-creator.xiaohongshu.com=62fc3f3d000000001200e239; gid=yYf4yyj0SiSyyYf4yyj0Y7vMdSUEAidAxfDvEDyDDSvyK9q8Kl40xK888y8q8JY8Y8K0dWyJ; abRequestId=f2c0bbc6553c3d50ccb8c387010e0ecd; xsecappid=xhs-pc-web; a1=19547b30a49ql29k5y90t8o9tf3yn6f06les7lchg30000328532; webId=101e492aa14658124dc963e78d7b74cd; webBuild=4.62.3; web_session=0400698ff6d4da564cc6fb7b123a4b9281db23; unread={%22ub%22:%2264a65d2f0000000023035e63%22%2C%22ue%22:%2264a65d2f0000000023035e63%22%2C%22uc%22:1}; websectiga=82e85efc5500b609ac1166aaf086ff8aa4261153a448ef0be5b17417e4512f28; sec_poison_id=7e055836-4c95-4eb6-895b-629a058c9d5d; loadts=1747408439446'
 
 # 请求头配置
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Cookie': 'customerClientId=087431735812996; x-user-id-creator.xiaohongshu.com=62fc3f3d000000001200e239; gid=yYf4yyj0SiSyyYf4yyj0Y7vMdSUEAidAxfDvEDyDDSvyK9q8Kl40xK888y8q8JY8Y8K0dWyJ; abRequestId=f2c0bbc6553c3d50ccb8c387010e0ecd; xsecappid=xhs-pc-web; a1=19547b30a49ql29k5y90t8o9tf3yn6f06les7lchg30000328532; webId=101e492aa14658124dc963e78d7b74cd; webBuild=4.62.3; web_session=0400698ff6d4da564cc6fb7b123a4b9281db23; unread={%22ub%22:%2264a65d2f0000000023035e63%22%2C%22ue%22:%2264a65d2f0000000023035e63%22%2C%22uc%22:1}; websectiga=82e85efc5500b609ac1166aaf086ff8aa4261153a448ef0be5b17417e4512f28; sec_poison_id=7e055836-4c95-4eb6-895b-629a058c9d5d; loadts=1747408439446'
-    # 需要替换为实际的cookie
+    'Cookie': cookie
+
 }
 
 
@@ -56,13 +59,14 @@ def get_note_content(url):
         return content, ' '.join(tags)
 
     except Exception as e:
-        logger.error(f"处理URL时出错: {url}, 错��信息: {str(e)}")
+        logger.error(f"处理URL时出错: {url}, 错误信息: {str(e)}")
         return '', ''
 
 
 def main():
-    # 输入输出文件路径
+    # 输入文件路径
     input_file = r"demo.xlsx"
+    # 输出文件路径
     output_file = f"结果_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
 
     try:

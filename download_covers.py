@@ -1,17 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time     : 2025/5/17 10:33
+# @Author   : 冉勇
+# @File     : download_covers.py
+# @Software : PyCharm
+# @Desc     : 下载小红书图文
 import pandas as pd
 import requests
 import os
-import logging
 import time
 import uuid
+from utils.log_util import logger
 from urllib.parse import urlparse
-
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 def create_folder(folder_path):
