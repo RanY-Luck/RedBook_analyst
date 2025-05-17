@@ -118,7 +118,7 @@ def save_results(keyword_counter, keyword_titles, output_file):
 
 def main():
     # 输入输出文件路径
-    input_file = r"结果_20250516_233246.xlsx"
+    input_file = r"结果_20250517_142553.xlsx"
     output_file = f"标题分析_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
     try:

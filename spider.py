@@ -46,11 +46,12 @@ def get_note_content(url):
         content = desc_elem.text.strip() if desc_elem else ''
 
         # 获取话题标签
-        tags_elem = soup.find(id='hash-tag')
+        tag_items = soup.find_all('a', class_='tag')
         tags = []
-        if tags_elem:
-            tag_items = tags_elem.find_all('a')
-            tags = [tag.text.strip() for tag in tag_items]
+        for tag in tag_items:
+            tag_text = tag.text.strip()
+            if tag_text.startswith('#'):
+                tags.append(tag_text[0:])  # 去掉#号
 
         # 如果内容仅包含话题标签,则将内容置空
         if content and all(tag in content for tag in tags) and len(''.join(tags)) >= len(content) * 0.8:
@@ -65,7 +66,7 @@ def get_note_content(url):
 
 def main():
     # 输入文件路径
-    input_file = r"demo.xlsx"
+    input_file = r"demo1.xlsx"
     # 输出文件路径
     output_file = f"结果_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
 
