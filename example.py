@@ -6,7 +6,7 @@ from source import XHS
 async def example():
     """通过代码设置参数，适合二次开发"""
     # 示例链接
-    demo_link = "https://www.xiaohongshu.com/explore/6706424f000000001a0212de?xsec_token=ABGW2KuFifpRZjZVqXdLlllXmOR44NoYprArdNtf7Eq7s=&xsec_source=pc_search&source=web_search_result_notes"
+    demo_link = ["https://www.xiaohongshu.com/explore/668e99a6000000002500146e?xsec_token=AB2UEFwJxl2tnZUStRyALgSSPwOGwi8WNqQy36ViJZgVk=&xsec_source=pc_search&source=web_explore_feed","https://www.xiaohongshu.com/explore/66b70623000000001e019cb2?xsec_token=AB3eFbGpzQTOyPzyGUbdyYx1guNfk8mTWlF3vYf4XfRfA=&xsec_source=pc_search&source=web_explore_feed"]
 
     # 实例对象
     work_path = ""  # 作品数据/文件保存根路径，默认值：项目根路径
@@ -65,6 +65,8 @@ async def example():
                 # index=[],
             )
         )
+        await xhs.export_to_excel()
+
 
 
 if __name__ == "__main__":

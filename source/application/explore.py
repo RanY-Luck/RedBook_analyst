@@ -20,6 +20,7 @@ class Explore:
             self.__extract_info(result, data)
             self.__extract_time(result, data)
             self.__extract_user(result, data)
+        print("result:", result)
         return result
 
     @staticmethod

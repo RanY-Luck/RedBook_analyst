@@ -2,7 +2,7 @@ from asyncio import Event, Queue
 from datetime import datetime
 from re import compile
 from urllib.parse import urlparse
-
+import pandas as pd
 from source.expansion import (
     BrowserCookie,
     Cleaner,
@@ -217,17 +217,6 @@ class XHS:
         else:
             logging(log, _("共 {0} 个小红书作品待处理...").format(len(urls)))
         # return urls  # 调试代码
-        print(";;;;",[
-            await self.__deal_extract(
-                i,
-                download,
-                index,
-                log,
-                bar,
-                data,
-            )
-            for i in urls
-        ])
         return [
             await self.__deal_extract(
                 i,
@@ -240,19 +229,38 @@ class XHS:
             for i in urls
         ]
 
-    async def extract_links(self, url: str, log) -> list:
+    async def extract_links(self, url, log) -> list:
         urls = []
-        for i in url.split():
-            if u := self.SHORT.search(i):
-                i = await self.html.request_url(
+
+        # 如果输入是字符串，则将其分割成列表
+        if isinstance(url, str):
+            url_list = url.split()
+        # 如果输入已经是列表，则直接使用
+        elif isinstance(url, list):
+            url_list = url
+        else:
+            # 处理其他可能的类型
+            url_list = [str(url)]
+
+        for i in url_list:
+            original_url = i
+
+            # 处理短链接
+            if u := self.SHORT.search(original_url):
+                expanded_url = await self.html.request_url(
                     u.group(),
                     False,
                     log,
                 )
-            if u := self.SHARE.search(i):
+                if expanded_url:  # 确保获取到了有效的展开URL
+                    original_url = expanded_url
+
+            # 尝试所有匹配模式
+            if u := self.SHARE.search(original_url):
                 urls.append(u.group())
-            elif u := self.LINK.search(i):
+            if u := self.LINK.search(original_url):
                 urls.append(u.group())
+
         return urls
 
     def extract_id(self, links: list[str]) -> list[str]:
@@ -402,3 +410,31 @@ class XHS:
             if value
             else ""
         )
+
+    async def export_to_excel(self, output_path=None):
+        """
+        将所有已采集的数据导出为Excel文件。
+        :param output_path: 可选，导出文件路径，默认为当前目录下自动命名
+        """
+
+        # 需要导出的字段
+        fields = [
+            "作品标题", "作品描述", "作品类型", "作品标签", "作品ID", "作品链接", "发布时间", "最后更新时间",
+            "作者昵称", "作者ID", "作者链接", "下载地址", "收藏数量", "评论数量", "分享数量", "点赞数量"
+        ]
+        # 连接数据库，获取所有数据
+        await self.data_recorder._connect_database()
+        # 查询所有数据
+        await self.data_recorder.cursor.execute(f'SELECT {", ".join(fields)} FROM explore_data')
+        rows = await self.data_recorder.cursor.fetchall()
+        # 转为DataFrame
+        df = pd.DataFrame(rows, columns=fields)
+        # 自动生成文件名
+        if not output_path:
+            output_path = f"小红书数据导出_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        # 对下载地址字段进行处理，使每个地址单独一行
+        if not df.empty and "下载地址" in df.columns:
+            df["下载地址"] = df["下载地址"].apply(lambda x: "\n".join(str(x).split()))
+        # 写入Excel
+        df.to_excel(output_path, index=False)
+        print(f"数据已成功导出到: {output_path}")
